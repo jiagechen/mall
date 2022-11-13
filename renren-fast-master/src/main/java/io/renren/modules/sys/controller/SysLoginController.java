@@ -72,10 +72,14 @@ public class SysLoginController extends AbstractController {
 		//用户信息
 		SysUserEntity user = sysUserService.queryByUserName(form.getUsername());
 
+		System.out.println("print 密码");
+		System.out.println(new Sha256Hash(form.getPassword(), user.getSalt()).toHex());
+
 		//账号不存在、密码错误
 		if(user == null || !user.getPassword().equals(new Sha256Hash(form.getPassword(), user.getSalt()).toHex())) {
 			return R.error("账号或密码不正确");
 		}
+
 
 		//账号锁定
 		if(user.getStatus() == 0){

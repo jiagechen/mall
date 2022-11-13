@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,6 +38,12 @@ public class CategoryController {
         return R.ok().put("page", page);
     }
 
+    @GetMapping("/listTree")
+    public R listTree(@RequestParam Map<String,Object> params){
+        List<CategoryEntity> list = categoryService.queryPageWithTree(params);
+        return R.ok().put("data" , list);
+    }
+
 
     /**
      * 信息
@@ -59,6 +66,16 @@ public class CategoryController {
 
         return R.ok();
     }
+    /**
+     * 批量修改
+     */
+    @RequestMapping("/updateBatch")
+    //@RequiresPermissions("product:category:update")
+    public R updateBatch(@RequestBody CategoryEntity[] category){
+        //categoryService.updateById(category);
+        categoryService.updateBatchById(Arrays.asList(category));
+        return R.ok();
+    }
 
     /**
      * 修改
@@ -77,8 +94,8 @@ public class CategoryController {
     @RequestMapping("/delete")
     @RequiresPermissions("product:category:delete")
     public R delete(@RequestBody Long[] catIds){
-		categoryService.removeByIds(Arrays.asList(catIds));
-
+		//categoryService.removeByIds(Arrays.asList(catIds)); - 物理删除不使用，使用逻辑删除
+        categoryService.removeCategoryByIds(Arrays.asList(catIds));
         return R.ok();
     }
 
